@@ -7,6 +7,16 @@ const seed = require("../db/seeds/seed");
 beforeEach(() => seed(data));
 afterAll(() => connection.end());
 
+describe("Invalid path", () => {
+  test("Status:404 - Path not found", () => {
+    return request(app)
+      .get("/api/invalidEnd")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Path not found");
+      });
+  });
+});
 describe("/api/topics", () => {
   describe("GET", () => {
     test("Status:200 - Returns array of topic objects", () => {
