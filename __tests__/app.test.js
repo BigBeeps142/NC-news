@@ -60,5 +60,13 @@ describe.only("/api/articles/:article_id", () => {
           expect(msg).toBe("Bad request");
         });
     });
+    test("Status:404 - Invalid id", () => {
+      return request(app)
+        .get("/api/articles/9999")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Not found");
+        });
+    });
   });
 });
