@@ -109,6 +109,7 @@ describe("/api/articles/:article_id", () => {
         .expect(200)
         .then(({ body: { article } }) => {
           expect(article.hasOwnProperty("comment_count")).toBe(true);
+          expect(Number(article.comment_count)).toBe(11);
         });
     });
     test("Status:400 - Invalid id format", () => {
