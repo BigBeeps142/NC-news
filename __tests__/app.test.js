@@ -9,6 +9,19 @@ afterAll(() => connection.end());
 
 describe("/api/topics", () => {
   describe("GET", () => {
-    test("Status:200 - Returns array of topic objects", () => {});
+    test("Status:200 - Returns array of topic objects", () => {
+      return request(app)
+        .get("/api/topics")
+        .expect(200)
+        .then(({ body: { topics } }) => {
+          expect(topics.length).toBe(3);
+          topics.forEach((topic) => {
+            expect(topic).toMatchObject({
+              description: expect.any(String),
+              slug: expect.any(String),
+            });
+          });
+        });
+    });
   });
 });
