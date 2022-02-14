@@ -1,6 +1,10 @@
 const express = require("express");
-const { patchArticle } = require("./controllers/aritcles");
-const { handlePsqlErrors, handle500s } = require("./controllers/errors");
+const { patchArticle } = require("./controllers/articles");
+const {
+  handlePsqlErrors,
+  handle500s,
+  handleNonPsqlErrors,
+} = require("./controllers/errors");
 const { getTopics } = require("./controllers/topics");
 const app = express();
 
@@ -13,5 +17,6 @@ app.all("/*", (req, res) => {
 });
 
 app.use(handlePsqlErrors);
+app.use(handleNonPsqlErrors);
 app.use(handle500s);
 module.exports = app;

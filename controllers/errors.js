@@ -6,7 +6,7 @@ exports.handlePsqlErrors = (err, req, res, next) => {
 
 exports.handleNonPsqlErrors = (err, req, res, next) => {
   if (err.status) {
-    res.status(res.status).send({ msg: err.msg });
+    res.status(err.status).send({ msg: err.msg });
   } else next(err);
 };
 

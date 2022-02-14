@@ -56,5 +56,15 @@ describe("/api/articles/:article_id", () => {
           expect(msg).toBe("Bad request");
         });
     });
+    test("Status:404 - Invalid id", () => {
+      const body = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/9999")
+        .send(body)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Not found");
+        });
+    });
   });
 });
