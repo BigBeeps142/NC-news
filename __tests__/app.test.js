@@ -50,6 +50,7 @@ describe.only("/api/articles/:article_id", () => {
             body: "I find this existence challenging",
             votes: 100,
           });
+          expect(article.hasOwnProperty("created_at")).toBe(true);
         });
     });
     test("Status:400 - Invalid id format", () => {
