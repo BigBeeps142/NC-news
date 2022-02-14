@@ -137,3 +137,35 @@ describe("/api/users", () => {
     });
   });
 });
+
+describe("/api/articles", () => {
+  describe("GET", () => {
+    test("Status:200 - returns array of articles", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(12);
+          articles.forEach((article) => {
+            expect(article).toMatchObject({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              votes: expect.any(Number),
+            });
+            expect(article.hasOwnProperty("created_at")).toBe(true);
+          });
+        });
+    });
+    test("Status:200 - Articles are sorted by date in desc order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+  });
+});
