@@ -47,5 +47,14 @@ describe("/api/articles/:article_id", () => {
           expect(article.votes).toBe(101);
         });
     });
+    test("Status:400 - Invalid id format", () => {
+      return request(app)
+        .patch("/api/articles/notValid")
+        .send({})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
