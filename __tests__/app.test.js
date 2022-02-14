@@ -35,3 +35,17 @@ describe("/api/topics", () => {
     });
   });
 });
+describe("/api/articles/:article_id", () => {
+  describe("PATCH", () => {
+    test("Status:200 - Returns updated article", () => {
+      const body = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(body)
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article.votes).toBe(101);
+        });
+    });
+  });
+});
