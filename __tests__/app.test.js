@@ -66,5 +66,14 @@ describe("/api/articles/:article_id", () => {
           expect(msg).toBe("Not found");
         });
     });
+    test("Status:400 - Invalid body", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
