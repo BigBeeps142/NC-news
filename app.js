@@ -1,14 +1,13 @@
 const express = require("express");
 
-
-
-const { getArticleById,patchArticle  } = require("./controllers/articles");
+const { getArticleById, patchArticle } = require("./controllers/articles");
 const {
   handle500s,
   handlePsqlErrors,
   handleNonPsqlErrors,
 } = require("./controllers/errors");
 const { getTopics } = require("./controllers/topics");
+const { getUsers } = require("./controllers/users");
 const app = express();
 
 app.use(express.json());
@@ -16,6 +15,8 @@ app.use(express.json());
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
 app.patch("/api/articles/:article_id", patchArticle);
+
+app.get("/api/users", getUsers);
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Path not found" });
 });
