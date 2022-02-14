@@ -75,5 +75,15 @@ describe("/api/articles/:article_id", () => {
           expect(msg).toBe("Bad request");
         });
     });
+    test("Status:400 - Invalid body data", () => {
+      const body = { inc_votes: "BAnna" };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(body)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
