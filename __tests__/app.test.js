@@ -121,3 +121,19 @@ describe("/api/articles/:article_id", () => {
     });
   });
 });
+
+describe("/api/users", () => {
+  describe("GET", () => {
+    test("Status:200 - Retuns array of users", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body: { users } }) => {
+          expect(users.length).toBe(4);
+          users.forEach((user) => {
+            expect(user.hasOwnProperty("username")).toBe(true);
+          });
+        });
+    });
+  });
+});
