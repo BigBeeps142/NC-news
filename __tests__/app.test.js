@@ -35,7 +35,57 @@ describe("/api/topics", () => {
     });
   });
 });
-describe.only("/api/articles/:article_id", () => {
+describe("/api/articles/:article_id", () => {
+  describe("PATCH", () => {
+    test("Status:200 - Returns updated article", () => {
+      const body = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(body)
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article.votes).toBe(101);
+        });
+    });
+    test("Status:400 - Invalid id format", () => {
+      return request(app)
+        .patch("/api/articles/notValid")
+        .send({})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
+    test("Status:404 - Invalid id", () => {
+      const body = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/9999")
+        .send(body)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Not found");
+        });
+    });
+    test("Status:400 - Invalid body", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
+    test("Status:400 - Invalid body data", () => {
+      const body = { inc_votes: "BAnna" };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(body)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
+  });
   describe("GET", () => {
     test("Status:200 - Returns article object", () => {
       return request(app)
