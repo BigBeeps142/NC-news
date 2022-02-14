@@ -24,7 +24,9 @@ exports.fetchArticle = (article_id) => {
 };
 
 exports.fetchArticles = () => {
-  return db.query(`SELECT * FROM articles`).then(({ rows }) => {
-    return rows;
-  });
+  return db
+    .query(`SELECT * FROM articles ORDER BY created_at DESC`)
+    .then(({ rows }) => {
+      return rows;
+    });
 };

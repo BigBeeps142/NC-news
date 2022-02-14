@@ -159,5 +159,13 @@ describe("/api/articles", () => {
           });
         });
     });
+    test("Status:200 - Articles are sorted by date in desc order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+        });
+    });
   });
 });
