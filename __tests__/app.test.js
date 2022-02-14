@@ -52,5 +52,13 @@ describe.only("/api/articles/:article_id", () => {
           });
         });
     });
+    test("Status:400 - Invalid id format", () => {
+      return request(app)
+        .get("/api/articles/notvalid")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
