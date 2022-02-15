@@ -263,5 +263,15 @@ describe("/api/articles/:article_id/comments", () => {
           expect(msg).toBe("Bad request");
         });
     });
+    test("Status:404 - Invalid id", () => {
+      const body = { username: "butter_bridge", body: "Body" };
+      return request(app)
+        .post("/api/articles/99999/comments")
+        .send(body)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Resource not found");
+        });
+    });
   });
 });

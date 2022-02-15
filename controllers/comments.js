@@ -20,7 +20,7 @@ exports.postCommentByArticle = (req, res, next) => {
   const articleId = req.params.article_id;
   Promise.all([
     insertCommentByArticle(articleId, req.body),
-    checkExists("articles", "article_id", articleId),
+    checkExists("users", "username", req.body.username),
   ])
     .then(([comment]) => {
       res.status(200).send({ comment });
