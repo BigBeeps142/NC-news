@@ -214,6 +214,14 @@ describe.only("/api/articles", () => {
           expect(articles).toBeSortedBy("created_at", { descending: false });
         });
     });
+    test("Status:400 - Invalid order query", () => {
+      return request(app)
+        .get("/api/articles?order=Invalid")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid query");
+        });
+    });
   });
 });
 

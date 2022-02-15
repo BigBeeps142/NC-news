@@ -49,6 +49,9 @@ exports.fetchArticles = ({ sort_by, order }) => {
 
   //ORDER
   if (order) {
+    if (!["ASC", "DECS"].includes(order)) {
+      return Promise.reject({ status: 400, msg: "Invalid query" });
+    }
     sortByStr += `${order};`;
   } else {
     sortByStr += `DESC;`;
