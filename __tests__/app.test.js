@@ -148,7 +148,7 @@ describe("/api/users", () => {
 });
 
 describe("/api/articles", () => {
-  describe.only("GET", () => {
+  describe("GET", () => {
     test("Status:200 - returns array of articles", () => {
       return request(app)
         .get("/api/articles")
@@ -232,6 +232,75 @@ describe("/api/articles/:article_id/comments", () => {
         .expect(404)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Resource not found");
+        });
+    });
+  });
+  describe.only("POST", () => {
+    test("Status:200 - Return body contains posted comment", () => {
+      const body = { username: "butter_bridge", body: "Body" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(body)
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            body: "Body",
+            votes: 0,
+            author: "butter_bridge",
+            article_id: 1,
+            created_at: expect.any(String),
+          });
+        });
+    });
+    test("Status:400 - Invalid id format", () => {
+      const body = { username: "butter_bridge", body: "Body" };
+      return request(app)
+        .post("/api/articles/Invalid/comments")
+        .send(body)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
+    test("Status:404 - Invalid id", () => {
+      const body = { username: "butter_bridge", body: "Body" };
+      return request(app)
+        .post("/api/articles/99999/comments")
+        .send(body)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Resource not found");
+        });
+    });
+    test("Status:404 - Invalid user", () => {
+      const body = { username: "Invalid", body: "Body" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(body)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Resource not found");
+        });
+    });
+    test("Status:400 - Invalid body", () => {
+      const body = { username: "Invalid" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(body)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
+    test("Status:400 - Invalid body data", () => {
+      const body = { username: "butter_bridge", body: 9000 };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(body)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
         });
     });
   });
