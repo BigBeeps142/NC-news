@@ -205,6 +205,15 @@ describe.only("/api/articles", () => {
           expect(msg).toBe("Invalid query");
         });
     });
+    test("Status:200 - Accepts order query", () => {
+      return request(app)
+        .get("/api/articles?order=ASC")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(12);
+          expect(articles).toBeSortedBy("created_at", { descending: false });
+        });
+    });
   });
 });
 
