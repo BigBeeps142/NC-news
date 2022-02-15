@@ -110,7 +110,6 @@ describe("checkExists", () => {
     return checkExists("articles", "article_id", 9999)
       .then(() => {})
       .catch((err) => {
-        console.log(err);
         expect(err.status).toBe(404);
         expect(err.msg).toBe("Resource not found");
       });
