@@ -178,3 +178,49 @@ describe("/api/articles", () => {
     });
   });
 });
+
+describe.only("/api/articles/:article_id/comments", () => {
+  describe("GET", () => {
+    test("Status:200 - Returns array of comment objects for given article", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments.length).toBe(11);
+          comments.forEach((comment) => {
+            expect(comment).toMatchObject({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              author: expect.any(String),
+              body: expect.any(String),
+            });
+            expect(comment.hasOwnProperty("created_at")).toBe(true);
+          });
+        });
+    });
+    test("Status:200 - Returns empty array if no comments for article", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments.length).toBe(0);
+        });
+    });
+    test("Status:400 - Invalid id format", () => {
+      return request(app)
+        .get("/api/articles/notValid/comments")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
+    test("Status:404 - Invalid id", () => {
+      return request(app)
+        .get("/api/articles/9999/comments")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Resource not found");
+        });
+    });
+  });
+});

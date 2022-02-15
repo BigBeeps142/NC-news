@@ -5,6 +5,7 @@ const {
   patchArticle,
   getArticles,
 } = require("./controllers/articles");
+const { getCommentsByArticle } = require("./controllers/comments");
 const {
   handle500s,
   handlePsqlErrors,
@@ -26,6 +27,9 @@ app.patch("/api/articles/:article_id", patchArticle);
 
 //USERS
 app.get("/api/users", getUsers);
+
+//COMMENTS
+app.get("/api/articles/:article_id/comments", getCommentsByArticle);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Path not found" });

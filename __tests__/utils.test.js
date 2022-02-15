@@ -3,7 +3,9 @@ const {
   createRef,
   formatComments,
 } = require("../db/helpers/utils");
-
+const { checkExists } = require("../utils/utils");
+const connection = require("../db/connection");
+afterAll(() => connection.end());
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
     const timestamp = 1557572706232;
@@ -100,5 +102,17 @@ describe("formatComments", () => {
     const comments = [{ created_at: timestamp }];
     const formattedComments = formatComments(comments, {});
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
+  });
+});
+
+describe("checkExists", () => {
+  test("Returns error if doesnt exist in trable", () => {
+    return checkExists("articles", "article_id", 9999)
+      .then(() => {})
+      .catch((err) => {
+        console.log(err);
+        expect(err.status).toBe(404);
+        expect(err.msg).toBe("Resource not found");
+      });
   });
 });
