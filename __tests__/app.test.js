@@ -293,5 +293,15 @@ describe("/api/articles/:article_id/comments", () => {
           expect(msg).toBe("Bad request");
         });
     });
+    test("Status:400 - Invalid body data", () => {
+      const body = { username: "butter_bridge", body: 9000 };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(body)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
