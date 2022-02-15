@@ -206,5 +206,13 @@ describe.only("/api/articles/:article_id/comments", () => {
           expect(comments.length).toBe(0);
         });
     });
+    test("Status:400 - Invalid id format", () => {
+      return request(app)
+        .get("/api/articles/notValid/comments")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
