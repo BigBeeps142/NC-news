@@ -283,5 +283,15 @@ describe("/api/articles/:article_id/comments", () => {
           expect(msg).toBe("Resource not found");
         });
     });
+    test("Status:400 - Invalid body", () => {
+      const body = { username: "Invalid" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(body)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
