@@ -29,11 +29,10 @@ exports.fetchArticle = (article_id) => {
     });
 };
 
-exports.fetchArticles = ({ sort_by, order }) => {
+exports.fetchArticles = ({ sort_by, order, topic }) => {
   //MAIN QUERY
   let queryStr = `SELECT articles.* ,CAST(COUNT(comments.comment_id)AS int) AS comment_count FROM articles
-  LEFT JOIN comments ON comments.article_id = articles.article_id
-  GROUP BY articles.article_id `;
+  LEFT JOIN comments ON comments.article_id = articles.article_id `;
   //SORT_BY
   let sortByStr = `ORDER BY created_at `;
   if (sort_by) {
@@ -56,8 +55,13 @@ exports.fetchArticles = ({ sort_by, order }) => {
   } else {
     sortByStr += `DESC;`;
   }
+  //TOPIC
+  if (topic) {
+    queryStr += `WHERE topic = '${topic}' `;
+  }
 
-  queryStr += sortByStr;
+  //DO QUERY
+  queryStr += `GROUP BY articles.article_id ` + sortByStr;
   return db.query(queryStr).then(({ rows }) => {
     return rows;
   });
