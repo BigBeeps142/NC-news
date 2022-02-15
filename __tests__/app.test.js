@@ -184,6 +184,7 @@ describe("/api/articles", () => {
           expect(articles.length).toBe(12);
           articles.forEach((article) => {
             expect(article.hasOwnProperty("comment_count")).toBe(true);
+            expect(typeof article.comment_count).toBe("number");
           });
         });
     });
