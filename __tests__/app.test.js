@@ -148,7 +148,7 @@ describe("/api/users", () => {
 });
 
 describe("/api/articles", () => {
-  describe("GET", () => {
+  describe.only("GET", () => {
     test("Status:200 - returns array of articles", () => {
       return request(app)
         .get("/api/articles")
@@ -176,10 +176,21 @@ describe("/api/articles", () => {
           expect(articles).toBeSortedBy("created_at", { descending: true });
         });
     });
+    test("Status:200 - Articles has comment count property", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(12);
+          articles.forEach((article) => {
+            expect(article.hasOwnProperty("comment_count")).toBe(true);
+          });
+        });
+    });
   });
 });
 
-describe.only("/api/articles/:article_id/comments", () => {
+describe("/api/articles/:article_id/comments", () => {
   describe("GET", () => {
     test("Status:200 - Returns array of comment objects for given article", () => {
       return request(app)
