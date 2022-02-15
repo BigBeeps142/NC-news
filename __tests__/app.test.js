@@ -233,6 +233,14 @@ describe.only("/api/articles", () => {
           });
         });
     });
+    test("Status:400 - Invalid topic query", () => {
+      return request(app)
+        .get("/api/articles?topic=Invalid")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid query");
+        });
+    });
   });
 });
 

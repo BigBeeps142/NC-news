@@ -57,6 +57,9 @@ exports.fetchArticles = ({ sort_by, order, topic }) => {
   }
   //TOPIC
   if (topic) {
+    if (!["mitch", "cats", "paper"].includes(topic)) {
+      return Promise.reject({ status: 400, msg: "Invalid query" });
+    }
     queryStr += `WHERE topic = '${topic}' `;
   }
 
