@@ -253,5 +253,15 @@ describe("/api/articles/:article_id/comments", () => {
           });
         });
     });
+    test("Status:400 - Invalid id format", () => {
+      const body = { username: "butter_bridge", body: "Body" };
+      return request(app)
+        .post("/api/articles/Invalid/comments")
+        .send(body)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
