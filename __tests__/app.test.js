@@ -194,7 +194,7 @@ describe.only("/api/articles/:article_id/comments", () => {
               author: expect.any(String),
               body: expect.any(String),
             });
-            expect(commnet.hasOwnProperty("created_at")).toBe(true);
+            expect(comment.hasOwnProperty("created_at")).toBe(true);
           });
         });
     });
