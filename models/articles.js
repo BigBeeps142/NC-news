@@ -29,15 +29,18 @@ exports.fetchArticle = (article_id) => {
     });
 };
 
-exports.fetchArticles = () => {
-  return db
-    .query(
-      `SELECT articles.* ,CAST(COUNT(comments.comment_id)AS int) AS comment_count FROM articles
-    LEFT JOIN comments ON comments.article_id = articles.article_id
-    GROUP BY articles.article_id 
-    ORDER BY created_at DESC`
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+exports.fetchArticles = ({ sort_by }) => {
+  let queryStr = `SELECT articles.* ,CAST(COUNT(comments.comment_id)AS int) AS comment_count FROM articles
+  LEFT JOIN comments ON comments.article_id = articles.article_id
+  GROUP BY articles.article_id `;
+  let sortByStr = `ORDER BY created_at `;
+  if (sort_by) {
+    sortByStr = `ORDER BY ${sort_by} `;
+  }
+  sortByStr += `DESC;`;
+
+  queryStr += sortByStr;
+  return db.query(queryStr).then(({ rows }) => {
+    return rows;
+  });
 };

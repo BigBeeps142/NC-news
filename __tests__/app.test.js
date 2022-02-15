@@ -168,7 +168,7 @@ describe("/api/articles", () => {
           });
         });
     });
-    test("Status:200 - Articles are sorted by date in desc order", () => {
+    test("Status:200 - Articles are default sorted by date in desc order", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -186,6 +186,15 @@ describe("/api/articles", () => {
             expect(article.hasOwnProperty("comment_count")).toBe(true);
             expect(typeof article.comment_count).toBe("number");
           });
+        });
+    });
+    test("Status:200 - Accepts sort_by query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(12);
+          expect(articles).toBeSortedBy("title", { descending: true });
         });
     });
   });
@@ -235,7 +244,7 @@ describe("/api/articles/:article_id/comments", () => {
         });
     });
   });
-  describe.only("POST", () => {
+  describe("POST", () => {
     test("Status:200 - Return body contains posted comment", () => {
       const body = { username: "butter_bridge", body: "Body" };
       return request(app)
