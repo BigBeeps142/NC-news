@@ -147,7 +147,7 @@ describe("/api/users", () => {
   });
 });
 
-describe("/api/articles", () => {
+describe.only("/api/articles", () => {
   describe("GET", () => {
     test("Status:200 - returns array of articles", () => {
       return request(app)
@@ -195,6 +195,14 @@ describe("/api/articles", () => {
         .then(({ body: { articles } }) => {
           expect(articles.length).toBe(12);
           expect(articles).toBeSortedBy("title", { descending: true });
+        });
+    });
+    test("Status:400 - Invalid sort by", () => {
+      return request(app)
+        .get("/api/articles?sort_by=Invalid")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid query");
         });
     });
   });
