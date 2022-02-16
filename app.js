@@ -8,6 +8,7 @@ const {
 const {
   getCommentsByArticle,
   postCommentByArticle,
+  deleteCommentById,
 } = require("./controllers/comments");
 const {
   handle500s,
@@ -34,6 +35,7 @@ app.get("/api/users", getUsers);
 //COMMENTS
 app.get("/api/articles/:article_id/comments", getCommentsByArticle);
 app.post("/api/articles/:article_id/comments", postCommentByArticle);
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Path not found" });
