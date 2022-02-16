@@ -29,15 +29,43 @@ exports.fetchArticle = (article_id) => {
     });
 };
 
-exports.fetchArticles = () => {
-  return db
-    .query(
-      `SELECT articles.* ,CAST(COUNT(comments.comment_id)AS int) AS comment_count FROM articles
-    LEFT JOIN comments ON comments.article_id = articles.article_id
-    GROUP BY articles.article_id 
-    ORDER BY created_at DESC`
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+exports.fetchArticles = ({ sort_by, order, topic }) => {
+  //MAIN QUERY
+  let queryStr = `SELECT articles.* ,CAST(COUNT(comments.comment_id)AS int) AS comment_count FROM articles
+  LEFT JOIN comments ON comments.article_id = articles.article_id `;
+  //SORT_BY
+  let sortByStr = `ORDER BY created_at `;
+  if (sort_by) {
+    if (
+      !["title", "article_id", "topic", "author", "body", "votes"].includes(
+        sort_by
+      )
+    ) {
+      return Promise.reject({ status: 400, msg: "Invalid query" });
+    }
+    sortByStr = `ORDER BY ${sort_by} `;
+  }
+
+  //ORDER
+  if (order) {
+    if (!["ASC", "DECS"].includes(order)) {
+      return Promise.reject({ status: 400, msg: "Invalid query" });
+    }
+    sortByStr += `${order};`;
+  } else {
+    sortByStr += `DESC;`;
+  }
+  //TOPIC
+  if (topic) {
+    if (!["mitch", "cats", "paper"].includes(topic)) {
+      return Promise.reject({ status: 400, msg: "Invalid query" });
+    }
+    queryStr += `WHERE topic = '${topic}' `;
+  }
+
+  //DO QUERY
+  queryStr += `GROUP BY articles.article_id ` + sortByStr;
+  return db.query(queryStr).then(({ rows }) => {
+    return rows;
+  });
 };

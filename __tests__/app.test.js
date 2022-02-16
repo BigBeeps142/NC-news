@@ -147,9 +147,9 @@ describe("/api/users", () => {
   });
 });
 
-describe("/api/articles", () => {
+describe.only("/api/articles", () => {
   describe("GET", () => {
-    test("Status:200 - returns array of articles", () => {
+    test("Status:200 - Returns array of articles", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -168,7 +168,7 @@ describe("/api/articles", () => {
           });
         });
     });
-    test("Status:200 - Articles are sorted by date in desc order", () => {
+    test("Status:200 - Articles are default sorted by date in desc order", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -186,6 +186,59 @@ describe("/api/articles", () => {
             expect(article.hasOwnProperty("comment_count")).toBe(true);
             expect(typeof article.comment_count).toBe("number");
           });
+        });
+    });
+    test("Status:200 - Accepts sort_by query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(12);
+          expect(articles).toBeSortedBy("title", { descending: true });
+        });
+    });
+    test("Status:400 - Invalid sort by", () => {
+      return request(app)
+        .get("/api/articles?sort_by=Invalid")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid query");
+        });
+    });
+    test("Status:200 - Accepts order query", () => {
+      return request(app)
+        .get("/api/articles?order=ASC")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(12);
+          expect(articles).toBeSortedBy("created_at", { descending: false });
+        });
+    });
+    test("Status:400 - Invalid order query", () => {
+      return request(app)
+        .get("/api/articles?order=Invalid")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid query");
+        });
+    });
+    test("Status:200 - Accepts topic query", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(11);
+          articles.forEach((article) => {
+            expect(article.topic).toBe("mitch");
+          });
+        });
+    });
+    test("Status:400 - Invalid topic query", () => {
+      return request(app)
+        .get("/api/articles?topic=Invalid")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid query");
         });
     });
   });
@@ -235,7 +288,7 @@ describe("/api/articles/:article_id/comments", () => {
         });
     });
   });
-  describe.only("POST", () => {
+  describe("POST", () => {
     test("Status:200 - Return body contains posted comment", () => {
       const body = { username: "butter_bridge", body: "Body" };
       return request(app)
