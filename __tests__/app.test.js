@@ -359,7 +359,7 @@ describe("/api/articles/:article_id/comments", () => {
   });
 });
 
-describe.only("/api/comments/:comment_id", () => {
+describe("/api/comments/:comment_id", () => {
   describe("DELETE", () => {
     test("Status:200 - Returns empty body", () => {
       return request(app)
@@ -383,6 +383,125 @@ describe.only("/api/comments/:comment_id", () => {
         .expect(404)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Resource not found");
+        });
+    });
+  });
+});
+
+describe.only("/api", () => {
+  describe("GET", () => {
+    test("Status:200 - Returns JSON describing all the available endpoints", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body: { endPoints } }) => {
+          expect(endPoints).toMatchObject({
+            "GET /api": {
+              description:
+                "serves up a json representation of all the available endpoints of the api",
+            },
+            "GET /api/topics": {
+              description: "serves an array of all topics",
+              queries: [],
+              exampleResponse: {
+                topics: [{ slug: "football", description: "Footie!" }],
+              },
+            },
+            "GET /api/articles": {
+              description: "serves an array of all articles",
+              queries: ["author", "topic", "sort_by", "order"],
+              exampleResponse: {
+                articles: [
+                  {
+                    article_id: 1,
+                    title: "Seafood substitutions are increasing",
+                    topic: "cooking",
+                    author: "weegembump",
+                    body: "Text from the article..",
+                    created_at: 1527695953341,
+                    votes: 5,
+                  },
+                ],
+              },
+            },
+            "GET /api/articles/:article_id": {
+              description: "serves an article",
+              queries: [],
+              exampleResponse: {
+                article: {
+                  article_id: 1,
+                  title: "Seafood substitutions are increasing",
+                  topic: "cooking",
+                  author: "weegembump",
+                  body: "Text from the article..",
+                  created_at: 1527695953341,
+                  votes: 5,
+                },
+              },
+            },
+            "PATCH /api/articles/:article_id": {
+              description: "Updates an article's votes",
+              exampleBodyRequired: { inc_votes: 3 },
+              queries: [],
+              exampleResponse: {
+                article: {
+                  article_id: 1,
+                  title: "Seafood substitutions are increasing",
+                  topic: "cooking",
+                  author: "weegembump",
+                  body: "Text from the article..",
+                  created_at: 1527695953341,
+                  votes: "Updated vote Number",
+                },
+              },
+            },
+            "GET /api/users": {
+              description: "serves an array of all topics",
+              queries: [],
+              exampleResponse: {
+                users: [
+                  {
+                    username: "Bobby",
+                  },
+                ],
+              },
+            },
+            "GET /api/articles/:article_id/comments": {
+              description: "serves an array of all comments on given article",
+              queries: [],
+              exampleResponse: {
+                Comments: [
+                  {
+                    comment_id: 1,
+                    votes: 3,
+                    author: "Jim",
+                    body: "Comment contents...",
+                    created_at: 1527695953341,
+                  },
+                ],
+              },
+            },
+            "POST /api/articles/:article_id/comments": {
+              description: "adds a comment to a given article",
+              exampleBodyRequired: { username: "butter_bridge", body: "Body" },
+              queries: [],
+              exampleResponse: {
+                Comment: [
+                  {
+                    comment_id: 5,
+                    votes: 0,
+                    author: "butter_bridge",
+                    body: "Body",
+                    created_at: 1527695953341,
+                  },
+                ],
+              },
+            },
+            "DELETE /api/comments/:comment_id": {
+              description: "deletes a comment ",
+              queries: [],
+            },
+          });
         });
     });
   });
