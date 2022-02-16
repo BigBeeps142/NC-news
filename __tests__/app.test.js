@@ -369,5 +369,13 @@ describe.only("/api/comments/:comment_id", () => {
           expect(body).toEqual({});
         });
     });
+    test("Status:400 - Invalid id format", () => {
+      return request(app)
+        .delete("/api/comments/Invalid")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
