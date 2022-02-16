@@ -377,5 +377,13 @@ describe.only("/api/comments/:comment_id", () => {
           expect(msg).toBe("Bad request");
         });
     });
+    test("Status:404 - Invalid id", () => {
+      return request(app)
+        .delete("/api/comments/999999")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Resource not found");
+        });
+    });
   });
 });
