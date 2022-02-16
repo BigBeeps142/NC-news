@@ -147,7 +147,7 @@ describe("/api/users", () => {
   });
 });
 
-describe.only("/api/articles", () => {
+describe("/api/articles", () => {
   describe("GET", () => {
     test("Status:200 - Returns array of articles", () => {
       return request(app)
@@ -354,6 +354,19 @@ describe("/api/articles/:article_id/comments", () => {
         .expect(400)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Bad request");
+        });
+    });
+  });
+});
+
+describe.only("/api/comments/:comment_id", () => {
+  describe("DELETE", () => {
+    test("Status:200 - Returns empty body", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
         });
     });
   });

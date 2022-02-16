@@ -20,3 +20,7 @@ exports.insertCommentByArticle = (articleId, { username, body }) => {
     return rows[0];
   });
 };
+
+exports.removeComment = (commentId) => {
+  return db.query("DELETE FROM comments WHERE comment_id=$1", [commentId]);
+};
