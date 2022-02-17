@@ -148,7 +148,7 @@ describe("/api/users", () => {
 });
 
 describe("/api/articles", () => {
-  describe("GET", () => {
+  describe.only("GET", () => {
     test("Status:200 - Returns array of articles", () => {
       return request(app)
         .get("/api/articles")
@@ -231,14 +231,6 @@ describe("/api/articles", () => {
           articles.forEach((article) => {
             expect(article.topic).toBe("mitch");
           });
-        });
-    });
-    test("Status:400 - Invalid topic query", () => {
-      return request(app)
-        .get("/api/articles?topic=Invalid")
-        .expect(400)
-        .then(({ body: { msg } }) => {
-          expect(msg).toBe("Invalid query");
         });
     });
   });
@@ -388,7 +380,7 @@ describe("/api/comments/:comment_id", () => {
   });
 });
 
-describe.only("/api", () => {
+describe("/api", () => {
   describe("GET", () => {
     test("Status:200 - Returns JSON describing all the available endpoints", () => {
       return request(app)

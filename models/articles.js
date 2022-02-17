@@ -56,16 +56,15 @@ exports.fetchArticles = ({ sort_by, order, topic }) => {
     sortByStr += `DESC;`;
   }
   //TOPIC
+  const queryValues = [];
   if (topic) {
-    if (!["mitch", "cats", "paper"].includes(topic)) {
-      return Promise.reject({ status: 400, msg: "Invalid query" });
-    }
-    queryStr += `WHERE topic = '${topic}' `;
+    queryStr += `WHERE topic = $1 `;
+    queryValues.push(topic);
   }
 
   //DO QUERY
   queryStr += `GROUP BY articles.article_id ` + sortByStr;
-  return db.query(queryStr).then(({ rows }) => {
+  return db.query(queryStr, queryValues).then(({ rows }) => {
     return rows;
   });
 };
