@@ -31,10 +31,10 @@ exports.fetchArticle = (article_id) => {
 
 exports.fetchArticles = ({ sort_by, order, topic }) => {
   //MAIN QUERY
-  let queryStr = `SELECT articles.* ,CAST(COUNT(comments.comment_id)AS int) AS comment_count FROM articles
+  let queryStr = `SELECT articles.article_id,articles.title,articles.topic,articles.author,articles.votes,articles.created_at,CAST(COUNT(comments.comment_id)AS int) AS comment_count FROM articles
   LEFT JOIN comments ON comments.article_id = articles.article_id `;
   //SORT_BY
-  let sortByStr = `ORDER BY created_at `;
+  let sortByStr = `ORDER BY articles.created_at `;
   if (sort_by) {
     if (
       !["title", "article_id", "topic", "author", "body", "votes"].includes(

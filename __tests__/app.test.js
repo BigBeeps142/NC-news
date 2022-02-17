@@ -161,7 +161,6 @@ describe("/api/articles", () => {
               title: expect.any(String),
               topic: expect.any(String),
               author: expect.any(String),
-              body: expect.any(String),
               votes: expect.any(Number),
             });
             expect(article.hasOwnProperty("created_at")).toBe(true);
