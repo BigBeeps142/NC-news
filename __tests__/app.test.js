@@ -422,6 +422,15 @@ describe("/api/comments/:comment_id", () => {
           expect(msg).toBe("Resource not found");
         });
     });
+    test("Status:400 - Invalid id format", () => {
+      return request(app)
+        .patch("/api/comments/NotValid")
+        .send({ inc_votes: 1 })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
 
