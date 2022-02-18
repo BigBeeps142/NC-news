@@ -1,11 +1,24 @@
 const db = require("../db/connection");
 
-exports.fetchCommentsByArticle = (articleId) => {
-  return db
-    .query(`SELECT * FROM comments WHERE article_id=$1`, [articleId])
-    .then(({ rows }) => {
-      return rows;
-    });
+exports.fetchCommentsByArticle = (articleId, { limit = 10, p }) => {
+  let queryStr = `SELECT * FROM comments WHERE article_id=$1 `;
+  //LIMIT
+  if (limit) {
+    if (!/\d/.test(limit)) {
+      return Promise.reject({ status: 400, msg: "Bad request" });
+    }
+    queryStr += `LIMIT ${limit} `;
+  }
+  //PAGE
+  if (p) {
+    if (!/\d/.test(p)) {
+      return Promise.reject({ status: 400, msg: "Bad request" });
+    }
+    queryStr += `OFFSET ${(p - 1) * limit} `;
+  }
+  return db.query(queryStr, [articleId]).then(({ rows }) => {
+    return rows;
+  });
 };
 
 exports.insertCommentByArticle = (articleId, { username, body }) => {
