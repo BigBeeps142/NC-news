@@ -296,6 +296,21 @@ describe("/api/articles", () => {
           expect(msg).toBe("Bad request");
         });
     });
+    test("Status:400 - Invalid author", () => {
+      const body = {
+        author: "Notvalid",
+        title: "Title",
+        body: "Body",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(body)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Resource not found");
+        });
+    });
   });
 });
 
