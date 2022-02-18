@@ -4,6 +4,9 @@ exports.fetchCommentsByArticle = (articleId, { limit = 10, p }) => {
   let queryStr = `SELECT * FROM comments WHERE article_id=$1 `;
   //LIMIT
   if (limit) {
+    if (!/\d/.test(limit)) {
+      return Promise.reject({ status: 400, msg: "Bad request" });
+    }
     queryStr += `LIMIT ${limit} `;
   }
   //PAGE
