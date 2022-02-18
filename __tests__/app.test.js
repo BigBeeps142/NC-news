@@ -148,7 +148,7 @@ describe("/api/users", () => {
 });
 
 describe("/api/articles", () => {
-  describe.only("GET", () => {
+  describe("GET", () => {
     test("Status:200 - Returns array of articles", () => {
       return request(app)
         .get("/api/articles")
@@ -408,7 +408,6 @@ describe("/api", () => {
                     title: "Seafood substitutions are increasing",
                     topic: "cooking",
                     author: "weegembump",
-                    body: "Text from the article..",
                     created_at: 1527695953341,
                     votes: 5,
                   },
