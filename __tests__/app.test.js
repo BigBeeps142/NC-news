@@ -162,6 +162,14 @@ describe.only("/api/users/:username", () => {
           });
         });
     });
+    test("Status:404 - Invalid Username", () => {
+      return request(app)
+        .get("/api/users/NotHere")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Resource not found");
+        });
+    });
   });
 });
 
