@@ -440,6 +440,15 @@ describe("/api/comments/:comment_id", () => {
           expect(msg).toBe("Bad request");
         });
     });
+    test("Status:400 - Invalid body data", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: "pinapple" })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
 
