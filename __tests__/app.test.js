@@ -311,6 +311,21 @@ describe("/api/articles", () => {
           expect(msg).toBe("Resource not found");
         });
     });
+    test("Status:400 - Invalid topic", () => {
+      const body = {
+        author: "butter_bridge",
+        title: "Title",
+        body: "Body",
+        topic: "invalid",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(body)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Resource not found");
+        });
+    });
   });
 });
 
