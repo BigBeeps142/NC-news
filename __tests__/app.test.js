@@ -369,7 +369,7 @@ describe("/api/articles/:article_id/comments", () => {
         .get("/api/articles/1/comments")
         .expect(200)
         .then(({ body: { comments } }) => {
-          expect(comments.length).toBe(11);
+          expect(comments.length <= 11).toBe(true);
           comments.forEach((comment) => {
             expect(comment).toMatchObject({
               comment_id: expect.any(Number),
@@ -410,6 +410,13 @@ describe("/api/articles/:article_id/comments", () => {
         .get("/api/articles/1/comments?limit=7")
         .then(({ body: { comments } }) => {
           expect(comments.length).toBe(7);
+        });
+    });
+    test("Status:200 - Accepts page query", () => {
+      return request(app)
+        .get("/api/articles/1/comments?p=2")
+        .then(({ body: { comments } }) => {
+          expect(comments.length).toBe(1);
         });
     });
   });

@@ -1,10 +1,14 @@
 const db = require("../db/connection");
 
-exports.fetchCommentsByArticle = (articleId, { limit }) => {
+exports.fetchCommentsByArticle = (articleId, { limit = 10, p }) => {
   let queryStr = `SELECT * FROM comments WHERE article_id=$1 `;
-  //TOPIC
+  //LIMIT
   if (limit) {
     queryStr += `LIMIT ${limit} `;
+  }
+  //PAGE
+  if (p) {
+    queryStr += `OFFSET ${(p - 1) * limit} `;
   }
   return db.query(queryStr, [articleId]).then(({ rows }) => {
     return rows;
