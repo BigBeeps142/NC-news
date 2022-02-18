@@ -29,7 +29,7 @@ exports.fetchArticle = (article_id) => {
     });
 };
 
-exports.fetchArticles = ({ sort_by, order, topic, limit }) => {
+exports.fetchArticles = ({ sort_by, order, topic, limit = 10, p }) => {
   //MAIN QUERY
   let queryStr = `SELECT articles.article_id,articles.title,articles.topic,articles.author,articles.votes,articles.created_at,CAST(COUNT(comments.comment_id)AS int) AS comment_count FROM articles
   LEFT JOIN comments ON comments.article_id = articles.article_id `;
@@ -62,16 +62,39 @@ exports.fetchArticles = ({ sort_by, order, topic, limit }) => {
     queryValues.push(topic);
   }
   //LIMIT
-  let limitStr = ";";
+  let limitStr = "";
   if (limit) {
-    limitStr = `LIMIT ${limit};`;
+    limitStr = `LIMIT ${limit} `;
+  }
+  //PAGE
+  let pageStr = ";";
+  if (p) {
+    pageStr = `OFFSET ${(p - 1) * limit};`;
   }
 
   //DO QUERY
-  queryStr += `GROUP BY articles.article_id ` + sortByStr + limitStr;
-  return db.query(queryStr, queryValues).then(({ rows }) => {
-    return rows;
-  });
+  // queryStr += `GROUP BY articles.article_id ` + sortByStr + limitStr + pageStr;
+  return db
+    .query(
+      queryStr +
+        `GROUP BY articles.article_id ` +
+        sortByStr +
+        limitStr +
+        pageStr,
+      queryValues
+    )
+    .then(({ rows }) => {
+      return Promise.all([
+        rows,
+        db.query(
+          queryStr + `GROUP BY articles.article_id ` + sortByStr,
+          queryValues
+        ),
+      ]);
+    })
+    .then(([articles, { rowCount }]) => {
+      return { articles, total_count: rowCount };
+    });
 };
 
 exports.insertArticle = ({ author, title, body, topic }) => {
