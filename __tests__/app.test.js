@@ -174,7 +174,7 @@ describe("/api/users/:username", () => {
 });
 
 describe("/api/articles", () => {
-  describe.only("GET", () => {
+  describe("GET", () => {
     test("Status:200 - Returns array of articles", () => {
       return request(app)
         .get("/api/articles")
@@ -363,7 +363,7 @@ describe("/api/articles", () => {
 });
 
 describe("/api/articles/:article_id/comments", () => {
-  describe("GET", () => {
+  describe.only("GET", () => {
     test("Status:200 - Returns array of comment objects for given article", () => {
       return request(app)
         .get("/api/articles/1/comments")
@@ -403,6 +403,13 @@ describe("/api/articles/:article_id/comments", () => {
         .expect(404)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Resource not found");
+        });
+    });
+    test("Status:200 - Accepts limit query", () => {
+      return request(app)
+        .get("/api/articles/1/comments?limit=7")
+        .then(({ body: { comments } }) => {
+          expect(comments.length).toBe(7);
         });
     });
   });

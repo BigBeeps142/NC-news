@@ -1,11 +1,14 @@
 const db = require("../db/connection");
 
-exports.fetchCommentsByArticle = (articleId) => {
-  return db
-    .query(`SELECT * FROM comments WHERE article_id=$1`, [articleId])
-    .then(({ rows }) => {
-      return rows;
-    });
+exports.fetchCommentsByArticle = (articleId, { limit }) => {
+  let queryStr = `SELECT * FROM comments WHERE article_id=$1 `;
+  //TOPIC
+  if (limit) {
+    queryStr += `LIMIT ${limit} `;
+  }
+  return db.query(queryStr, [articleId]).then(({ rows }) => {
+    return rows;
+  });
 };
 
 exports.insertCommentByArticle = (articleId, { username, body }) => {
