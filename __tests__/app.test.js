@@ -275,6 +275,14 @@ describe("/api/articles", () => {
           expect(articles[0].article_id).toBe(6);
         });
     });
+    test("Status:400 - Invalid limit query", () => {
+      return request(app)
+        .get("/api/articles?limit=invalid")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
   describe("POST", () => {
     test("Status:200 - Returns posted article", () => {

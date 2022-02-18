@@ -64,11 +64,17 @@ exports.fetchArticles = ({ sort_by, order, topic, limit = 10, p }) => {
   //LIMIT
   let limitStr = "";
   if (limit) {
+    if (!/\d/.test(limit)) {
+      return Promise.reject({ status: 400, msg: "Bad request" });
+    }
     limitStr = `LIMIT ${limit} `;
   }
   //PAGE
   let pageStr = ";";
   if (p) {
+    if (!/\d/.test(p)) {
+      return Promise.reject({ status: 400, msg: "Bad request" });
+    }
     pageStr = `OFFSET ${(p - 1) * limit};`;
   }
 
