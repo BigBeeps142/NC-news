@@ -147,6 +147,32 @@ describe("/api/users", () => {
   });
 });
 
+describe.only("/api/users/:username", () => {
+  describe("GET", () => {
+    test("Status:200 - Returns user object", () => {
+      return request(app)
+        .get("/api/users/butter_bridge")
+        .expect(200)
+        .then(({ body: { user } }) => {
+          expect(user).toMatchObject({
+            username: "butter_bridge",
+            name: "jonny",
+            avatar_url:
+              "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+          });
+        });
+    });
+    test("Status:404 - Invalid Username", () => {
+      return request(app)
+        .get("/api/users/NotHere")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Resource not found");
+        });
+    });
+  });
+});
+
 describe("/api/articles", () => {
   describe("GET", () => {
     test("Status:200 - Returns array of articles", () => {
