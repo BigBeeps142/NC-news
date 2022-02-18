@@ -259,6 +259,31 @@ describe("/api/articles", () => {
         });
     });
   });
+  describe.only("POST", () => {
+    test("Status:200 - Returns posted article", () => {
+      const body = {
+        author: "butter_bridge",
+        title: "Title",
+        body: "Body",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(body)
+        .then(({ body: { article } }) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            author: "butter_bridge",
+            title: "Title",
+            body: "Body",
+            topic: "cats",
+            votes: 0,
+            created_at: expect.any(String),
+            comment_count: 0,
+          });
+        });
+    });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {
@@ -403,7 +428,7 @@ describe("/api/comments/:comment_id", () => {
         });
     });
   });
-  describe.only("PATCH", () => {
+  describe("PATCH", () => {
     test("Status:200 - Return body contains updated votes", () => {
       return request(app)
         .patch("/api/comments/1")

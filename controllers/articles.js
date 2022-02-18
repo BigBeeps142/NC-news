@@ -2,6 +2,7 @@ const {
   updateArticle,
   fetchArticle,
   fetchArticles,
+  insertArticle,
 } = require("../models/articles");
 
 exports.patchArticle = (req, res, next) => {
@@ -24,6 +25,14 @@ exports.getArticles = (req, res, next) => {
   fetchArticles(req.query)
     .then((articles) => {
       res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+exports.postArticle = (req, res, next) => {
+  insertArticle(req.body)
+    .then((article) => {
+      res.status(200).send({ article });
     })
     .catch(next);
 };

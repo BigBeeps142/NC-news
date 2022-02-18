@@ -68,3 +68,14 @@ exports.fetchArticles = ({ sort_by, order, topic }) => {
     return rows;
   });
 };
+
+exports.insertArticle = ({ author, title, body, topic }) => {
+  return db
+    .query(
+      "INSERT INTO articles (author, title, body, topic ) VALUES ($1,$2,$3,$4) RETURNING *,0 AS comment_count;",
+      [author, title, body, topic]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
