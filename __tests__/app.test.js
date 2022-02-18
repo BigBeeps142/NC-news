@@ -174,7 +174,7 @@ describe("/api/users/:username", () => {
 });
 
 describe("/api/articles", () => {
-  describe("GET", () => {
+  describe.only("GET", () => {
     test("Status:200 - Returns array of articles", () => {
       return request(app)
         .get("/api/articles")
@@ -258,8 +258,16 @@ describe("/api/articles", () => {
           });
         });
     });
+    test("Status:200 - Accepts limit query", () => {
+      return request(app)
+        .get("/api/articles?limit=5")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(5);
+        });
+    });
   });
-  describe.only("POST", () => {
+  describe("POST", () => {
     test("Status:200 - Returns posted article", () => {
       const body = {
         author: "butter_bridge",
