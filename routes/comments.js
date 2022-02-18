@@ -1,9 +1,9 @@
-const commentsRouter = require("express").Router();
+const commentsRouter = require("express").Router({ mergeParams: true });
 const {
   getCommentsByArticle,
   postCommentByArticle,
   deleteCommentById,
-} = require("./controllers/comments");
+} = require("../controllers/comments");
 
 commentsRouter.route("/").get(getCommentsByArticle).post(postCommentByArticle);
 
