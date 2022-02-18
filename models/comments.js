@@ -11,6 +11,9 @@ exports.fetchCommentsByArticle = (articleId, { limit = 10, p }) => {
   }
   //PAGE
   if (p) {
+    if (!/\d/.test(p)) {
+      return Promise.reject({ status: 400, msg: "Bad request" });
+    }
     queryStr += `OFFSET ${(p - 1) * limit} `;
   }
   return db.query(queryStr, [articleId]).then(({ rows }) => {

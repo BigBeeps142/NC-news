@@ -427,6 +427,14 @@ describe("/api/articles/:article_id/comments", () => {
           expect(msg).toBe("Bad request");
         });
     });
+    test("Status:400 - Invalid page query", () => {
+      return request(app)
+        .get("/api/articles/1/comments?p=Invalid")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
   describe("POST", () => {
     test("Status:200 - Return body contains posted comment", () => {
