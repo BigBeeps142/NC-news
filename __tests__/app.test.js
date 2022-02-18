@@ -413,6 +413,15 @@ describe("/api/comments/:comment_id", () => {
           expect(comment.votes).toBe(17);
         });
     });
+    test("Status:404 - Invalid id", () => {
+      return request(app)
+        .patch("/api/comments/999999")
+        .send({ inc_votes: 1 })
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Resource not found");
+        });
+    });
   });
 });
 
