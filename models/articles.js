@@ -29,7 +29,7 @@ exports.fetchArticle = (article_id) => {
     });
 };
 
-exports.fetchArticles = ({ sort_by, order, topic }) => {
+exports.fetchArticles = ({ sort_by, order, topic, limit = 10, p }) => {
   //MAIN QUERY
   let queryStr = `SELECT articles.article_id,articles.title,articles.topic,articles.author,articles.votes,articles.created_at,CAST(COUNT(comments.comment_id)AS int) AS comment_count FROM articles
   LEFT JOIN comments ON comments.article_id = articles.article_id `;
@@ -51,9 +51,9 @@ exports.fetchArticles = ({ sort_by, order, topic }) => {
     if (!["ASC", "DECS"].includes(order)) {
       return Promise.reject({ status: 400, msg: "Invalid query" });
     }
-    sortByStr += `${order};`;
+    sortByStr += `${order} `;
   } else {
-    sortByStr += `DESC;`;
+    sortByStr += `DESC `;
   }
   //TOPIC
   const queryValues = [];
@@ -61,12 +61,46 @@ exports.fetchArticles = ({ sort_by, order, topic }) => {
     queryStr += `WHERE topic = $1 `;
     queryValues.push(topic);
   }
+  //LIMIT
+  let limitStr = "";
+  if (limit) {
+    if (!/\d/.test(limit)) {
+      return Promise.reject({ status: 400, msg: "Bad request" });
+    }
+    limitStr = `LIMIT ${limit} `;
+  }
+  //PAGE
+  let pageStr = ";";
+  if (p) {
+    if (!/\d/.test(p)) {
+      return Promise.reject({ status: 400, msg: "Bad request" });
+    }
+    pageStr = `OFFSET ${(p - 1) * limit};`;
+  }
 
   //DO QUERY
-  queryStr += `GROUP BY articles.article_id ` + sortByStr;
-  return db.query(queryStr, queryValues).then(({ rows }) => {
-    return rows;
-  });
+  // queryStr += `GROUP BY articles.article_id ` + sortByStr + limitStr + pageStr;
+  return db
+    .query(
+      queryStr +
+        `GROUP BY articles.article_id ` +
+        sortByStr +
+        limitStr +
+        pageStr,
+      queryValues
+    )
+    .then(({ rows }) => {
+      return Promise.all([
+        rows,
+        db.query(
+          queryStr + `GROUP BY articles.article_id ` + sortByStr,
+          queryValues
+        ),
+      ]);
+    })
+    .then(([articles, { rowCount }]) => {
+      return { articles, total_count: rowCount };
+    });
 };
 
 exports.insertArticle = ({ author, title, body, topic }) => {

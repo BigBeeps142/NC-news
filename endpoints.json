@@ -10,8 +10,8 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles and total count",
+    "queries": ["author", "topic", "sort_by", "order", "limit", "p"],
     "exampleResponse": {
       "articles": [
         {
@@ -22,7 +22,8 @@
           "created_at": 1527695953341,
           "votes": 5
         }
-      ]
+      ],
+      "total_count": 5
     }
   },
   "GET /api/articles/:article_id": {

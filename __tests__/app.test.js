@@ -174,13 +174,13 @@ describe("/api/users/:username", () => {
 });
 
 describe("/api/articles", () => {
-  describe("GET", () => {
+  describe.only("GET", () => {
     test("Status:200 - Returns array of articles", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles.length).toBe(12);
+        .then(({ body: { articles, total_count } }) => {
+          expect(total_count).toBe(12);
           articles.forEach((article) => {
             expect(article).toMatchObject({
               article_id: expect.any(Number),
@@ -205,8 +205,8 @@ describe("/api/articles", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles.length).toBe(12);
+        .then(({ body: { articles, total_count } }) => {
+          expect(total_count).toBe(12);
           articles.forEach((article) => {
             expect(article.hasOwnProperty("comment_count")).toBe(true);
             expect(typeof article.comment_count).toBe("number");
@@ -217,8 +217,8 @@ describe("/api/articles", () => {
       return request(app)
         .get("/api/articles?sort_by=title")
         .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles.length).toBe(12);
+        .then(({ body: { articles, total_count } }) => {
+          expect(total_count).toBe(12);
           expect(articles).toBeSortedBy("title", { descending: true });
         });
     });
@@ -234,8 +234,8 @@ describe("/api/articles", () => {
       return request(app)
         .get("/api/articles?order=ASC")
         .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles.length).toBe(12);
+        .then(({ body: { articles, total_count } }) => {
+          expect(total_count).toBe(12);
           expect(articles).toBeSortedBy("created_at", { descending: false });
         });
     });
@@ -251,15 +251,48 @@ describe("/api/articles", () => {
       return request(app)
         .get("/api/articles?topic=mitch")
         .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles.length).toBe(11);
+        .then(({ body: { articles, total_count } }) => {
+          expect(total_count).toBe(11);
           articles.forEach((article) => {
             expect(article.topic).toBe("mitch");
           });
         });
     });
+    test("Status:200 - Accepts limit query", () => {
+      return request(app)
+        .get("/api/articles?limit=5")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(5);
+        });
+    });
+    test("Status:200 - Accepts page query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=ASC&limit=5&p=2")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles.length).toBe(5);
+          expect(articles[0].article_id).toBe(6);
+        });
+    });
+    test("Status:400 - Invalid limit query", () => {
+      return request(app)
+        .get("/api/articles?limit=invalid")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
+    test("Status:400 - Invalid page query", () => {
+      return request(app)
+        .get("/api/articles?p=Invalid")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
-  describe.only("POST", () => {
+  describe("POST", () => {
     test("Status:200 - Returns posted article", () => {
       const body = {
         author: "butter_bridge",
