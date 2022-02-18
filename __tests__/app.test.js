@@ -147,7 +147,7 @@ describe("/api/users", () => {
   });
 });
 
-describe.only("/api/users/:username", () => {
+describe("/api/users/:username", () => {
   describe("GET", () => {
     test("Status:200 - Returns user object", () => {
       return request(app)
@@ -400,6 +400,17 @@ describe("/api/comments/:comment_id", () => {
         .expect(404)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Resource not found");
+        });
+    });
+  });
+  describe.only("PATCH", () => {
+    test("Status:200 - Return body contains updated votes", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment.votes).toBe(17);
         });
     });
   });
