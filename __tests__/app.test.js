@@ -259,6 +259,74 @@ describe("/api/articles", () => {
         });
     });
   });
+  describe.only("POST", () => {
+    test("Status:200 - Returns posted article", () => {
+      const body = {
+        author: "butter_bridge",
+        title: "Title",
+        body: "Body",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(body)
+        .then(({ body: { article } }) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            author: "butter_bridge",
+            title: "Title",
+            body: "Body",
+            topic: "cats",
+            votes: 0,
+            created_at: expect.any(String),
+            comment_count: 0,
+          });
+        });
+    });
+    test("Status:400 - Invalid body", () => {
+      const body = {
+        author: "butter_bridge",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(body)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
+    test("Status:400 - Invalid author", () => {
+      const body = {
+        author: "Notvalid",
+        title: "Title",
+        body: "Body",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(body)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Resource not found");
+        });
+    });
+    test("Status:400 - Invalid topic", () => {
+      const body = {
+        author: "butter_bridge",
+        title: "Title",
+        body: "Body",
+        topic: "invalid",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(body)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Resource not found");
+        });
+    });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {
@@ -403,7 +471,7 @@ describe("/api/comments/:comment_id", () => {
         });
     });
   });
-  describe.only("PATCH", () => {
+  describe("PATCH", () => {
     test("Status:200 - Return body contains updated votes", () => {
       return request(app)
         .patch("/api/comments/1")
