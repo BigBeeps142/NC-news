@@ -283,6 +283,19 @@ describe("/api/articles", () => {
           });
         });
     });
+    test("Status:400 - Invalid body", () => {
+      const body = {
+        author: "butter_bridge",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(body)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
 
