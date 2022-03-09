@@ -17,7 +17,12 @@ exports.fetchCommentsByArticle = (articleId, { limit = 10, p }) => {
     queryStr += `OFFSET ${(p - 1) * limit} `;
   }
   return db.query(queryStr, [articleId]).then(({ rows }) => {
-    return rows;
+    return Promise.all([
+      rows,
+      db.query("SELECT * FROM comments WHERE article_id=$1 ", [articleId]),
+    ]).then(([comments, { rowCount }]) => {
+      return { comments, total_count: rowCount };
+    });
   });
 };
 

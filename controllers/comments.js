@@ -12,8 +12,8 @@ exports.getCommentsByArticle = (req, res, next) => {
     fetchCommentsByArticle(articleId, req.query),
     checkExists("articles", "article_id", articleId),
   ])
-    .then(([comments]) => {
-      res.status(200).send({ comments });
+    .then(([{ comments, total_count }]) => {
+      res.status(200).send({ comments, total_count });
     })
     .catch(next);
 };
