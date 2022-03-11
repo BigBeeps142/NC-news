@@ -4,6 +4,7 @@ const {
   fetchArticles,
   insertArticle,
 } = require("../models/articles");
+const { checkExists } = require("../utils/utils");
 
 exports.patchArticle = (req, res, next) => {
   updateArticle(req.params.article_id, req.body)
@@ -22,8 +23,11 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles(req.query)
-    .then(({ articles, total_count }) => {
+  Promise.all([
+    fetchArticles(req.query),
+    req.query.topic ? checkExists("topics", "slug", req.query.topic) : "",
+  ])
+    .then(([{ articles, total_count }]) => {
       res.status(200).send({ articles, total_count });
     })
     .catch(next);

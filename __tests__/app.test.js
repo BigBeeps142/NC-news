@@ -363,7 +363,7 @@ describe("/api/articles", () => {
 });
 
 describe("/api/articles/:article_id/comments", () => {
-  describe.only("GET", () => {
+  describe("GET", () => {
     test("Status:200 - Returns array of comment objects for given article", () => {
       return request(app)
         .get("/api/articles/1/comments")
@@ -603,8 +603,8 @@ describe("/api", () => {
               },
             },
             "GET /api/articles": {
-              description: "serves an array of all articles",
-              queries: ["author", "topic", "sort_by", "order"],
+              description: "serves an array of all articles and total count",
+              queries: ["author", "topic", "sort_by", "order", "limit", "p"],
               exampleResponse: {
                 articles: [
                   {
@@ -616,6 +616,7 @@ describe("/api", () => {
                     votes: 5,
                   },
                 ],
+                total_count: 5,
               },
             },
             "GET /api/articles/:article_id": {
@@ -649,8 +650,30 @@ describe("/api", () => {
                 },
               },
             },
+            "POST /api/articles": {
+              description: "Adds an article",
+              exampleBodyRequired: {
+                author: "butter_bridge",
+                title: "Title",
+                body: "Body",
+                topic: "cats",
+              },
+              queries: [],
+              exampleResponse: {
+                article: {
+                  article_id: 1,
+                  title: "Seafood substitutions are increasing",
+                  topic: "cooking",
+                  author: "weegembump",
+                  body: "Text from the article..",
+                  created_at: 1527695953341,
+                  votes: 0,
+                  comment_count: 0,
+                },
+              },
+            },
             "GET /api/users": {
-              description: "serves an array of all topics",
+              description: "serves an array of all usernames",
               queries: [],
               exampleResponse: {
                 users: [
@@ -660,9 +683,21 @@ describe("/api", () => {
                 ],
               },
             },
+            "GET /api/users/:username": {
+              description: "serves a user",
+              queries: [],
+              exampleResponse: {
+                user: {
+                  username: "butter_bridge",
+                  name: "jonny",
+                  avatar_url:
+                    "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+                },
+              },
+            },
             "GET /api/articles/:article_id/comments": {
               description: "serves an array of all comments on given article",
-              queries: [],
+              queries: ["limit", "p"],
               exampleResponse: {
                 Comments: [
                   {
@@ -694,6 +729,20 @@ describe("/api", () => {
             "DELETE /api/comments/:comment_id": {
               description: "deletes a comment ",
               queries: [],
+            },
+            "PATCH /api/comments/:comment_id": {
+              description: "Updates an comment's votes",
+              exampleBodyRequired: { inc_votes: 3 },
+              queries: [],
+              exampleResponse: {
+                comment: {
+                  comment_id: 1,
+                  votes: "Updated vote Number",
+                  author: "Jim",
+                  body: "Comment contents...",
+                  created_at: 1527695953341,
+                },
+              },
             },
           });
         });
