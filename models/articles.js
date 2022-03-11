@@ -45,11 +45,16 @@ exports.fetchArticles = ({ sort_by, order, topic, limit = 10, p }) => {
         "body",
         "votes",
         "created_at",
+        "comment_count",
       ].includes(sort_by)
     ) {
       return Promise.reject({ status: 400, msg: "Invalid query" });
     }
-    sortByStr = `ORDER BY ${sort_by} `;
+    if (sort_by === "comment_count") {
+      sortByStr = `ORDER BY COUNT(comments.comment_id) `;
+    } else {
+      sortByStr = `ORDER BY ${sort_by} `;
+    }
   }
 
   //ORDER
