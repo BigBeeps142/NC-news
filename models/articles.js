@@ -59,7 +59,7 @@ exports.fetchArticles = ({ sort_by, order, topic, limit = 10, p }) => {
 
   //ORDER
   if (order) {
-    if (!["ASC", "DECS"].includes(order)) {
+    if (!["ASC", "DESC"].includes(order)) {
       return Promise.reject({ status: 400, msg: "Invalid query" });
     }
     sortByStr += `${order} `;
